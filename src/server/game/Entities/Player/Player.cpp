@@ -5039,7 +5039,7 @@ void Player::DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmC
     if (updateRealmChars)
         sWorld->UpdateRealmCharCount(accountId);
 
-    sWorld->DeleteCharacterNameData(GUID_LOPART(guid));
+    sWorld->DeleteCharacterNameData(guid);
 }
 
 /**
