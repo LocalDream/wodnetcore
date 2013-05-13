@@ -13830,6 +13830,9 @@ void Player::ApplyReforgeEnchantment(Item* item, bool apply)
         case ITEM_MOD_BLOCK_VALUE:
             HandleBaseModValue(SHIELD_BLOCK_VALUE, FLAT_MOD, -removeValue, apply);
             break;
+        case ITEM_MOD_MASTERY_RATING:
+            ApplyRatingMod(CR_MASTERY, -int32(removeValue), apply);
+            break;
     }
 
     switch (reforge->FinalStat)
@@ -13939,6 +13942,9 @@ void Player::ApplyReforgeEnchantment(Item* item, bool apply)
             break;
         case ITEM_MOD_BLOCK_VALUE:
             HandleBaseModValue(SHIELD_BLOCK_VALUE, FLAT_MOD, addValue, apply);
+            break;
+        case ITEM_MOD_MASTERY_RATING:
+            ApplyRatingMod(CR_MASTERY, int32(addValue), apply);
             break;
     }
 }
@@ -14274,6 +14280,10 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                         case ITEM_MOD_BLOCK_VALUE:
                             HandleBaseModValue(SHIELD_BLOCK_VALUE, FLAT_MOD, float(enchant_amount), apply);
                             sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "+ %u BLOCK_VALUE", enchant_amount);
+                            break;
+                        case ITEM_MOD_MASTERY_RATING:
+                            ApplyRatingMod(CR_MASTERY, enchant_amount, apply);
+                            sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "+ %u MASTERY", enchant_amount);
                             break;
                         default:
                             break;
