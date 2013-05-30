@@ -27,7 +27,7 @@ void RBACRole::GrantPermission(uint32 permissionId)
         _perms.set(permissionId);
     }
     else
-        sLog->outError(LOG_FILTER_RBAC, "RBACRole::GrantPermission (Role %u, Permission %u). Permission not lower than %u",
+        TC_LOG_ERROR(LOG_FILTER_RBAC, "RBACRole::GrantPermission (Role %u, Permission %u). Permission not lower than %u",
                        GetId(), permissionId, RBAC_PERM_MAX);
 }
 
@@ -39,7 +39,7 @@ void RBACRole::RevokePermission(uint32 permissionId)
         _perms.reset(permissionId);
     }
     else
-        sLog->outError(LOG_FILTER_RBAC, "RBACRole::RevokePermission (Role %u, Permission %u). Permission not lower than %u",
+        TC_LOG_ERROR(LOG_FILTER_RBAC, "RBACRole::RevokePermission (Role %u, Permission %u). Permission not lower than %u",
                        GetId(), permissionId, RBAC_PERM_MAX);
 }
 
@@ -386,8 +386,8 @@ RBACCommandResult RBACData::RevokePermission(uint32 permissionId, int32 realmId 
 
 void RBACData::LoadFromDB()
 {
-    sLog->outInfo(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]", GetId(), GetName().c_str());
-    sLog->outDebug(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Loading groups", GetId(), GetName().c_str());
+    TC_LOG_INFO(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]", GetId(), GetName().c_str());
+    TC_LOG_DEBUG(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Loading groups", GetId(), GetName().c_str());
 
     // Load account group that affect current realm
     PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_RBAC_ACCOUNT_GROUPS);
@@ -405,7 +405,7 @@ void RBACData::LoadFromDB()
         while (result->NextRow());
     }
 
-    sLog->outDebug(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Loading roles", GetId(), GetName().c_str());
+    TC_LOG_DEBUG(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Loading roles", GetId(), GetName().c_str());
     // Load account roles (granted and denied) that affect current realm
     stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_RBAC_ACCOUNT_ROLES);
     stmt->setUInt32(0, GetId());
@@ -425,7 +425,7 @@ void RBACData::LoadFromDB()
         while (result->NextRow());
     }
 
-    sLog->outDebug(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Loading permissions", GetId(), GetName().c_str());
+    TC_LOG_DEBUG(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Loading permissions", GetId(), GetName().c_str());
     // Load account permissions (granted and denied) that affect current realm
     stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_RBAC_ACCOUNT_PERMISSIONS);
     stmt->setUInt32(0, GetId());
@@ -445,13 +445,13 @@ void RBACData::LoadFromDB()
         while (result->NextRow());
     }
 
-    sLog->outDebug(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Adding default groups", GetId(), GetName().c_str());
+    TC_LOG_DEBUG(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Adding default groups", GetId(), GetName().c_str());
     // Add default groups
     RBACGroupContainer const& groups = sAccountMgr->GetRBACDefaultGroups();
     for (RBACGroupContainer::const_iterator itr = groups.begin(); itr != groups.end(); ++itr)
         AddGroup(*itr);
 
-    sLog->outDebug(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Calculating global permissions", GetId(), GetName().c_str());
+    TC_LOG_DEBUG(LOG_FILTER_RBAC, "RBACData::LoadFromDB [Id: %u Name: %s]: Calculating global permissions", GetId(), GetName().c_str());
     // Force calculation of permissions, it wasn't performed at load time
     // while adding groups, roles and permissions
     CalculateNewPermissions();
